@@ -19,6 +19,21 @@ func TestSingleLinked_InsertAtHead(t *testing.T) {
 	}
 }
 
+// test with a string instead of an int
+func TestSingleLinked_InsertAtHeadString(t *testing.T) {
+	link := NewSingleLinkedList[string]()
+	link.InsertAtHead("one")
+	link.InsertAtHead("two")
+	link.InsertAtHead("three")
+	link.InsertAtHead("four")
+
+	expected := []string{"four", "three", "two", "one"}
+	values := link.Values()
+	if !reflect.DeepEqual(values, expected) {
+		t.Errorf("Expected %v, got %v", expected, values)
+	}
+}
+
 func TestSingleLinked_InsertAtTail(t *testing.T) {
 	link := NewSingleLinkedList[int]()
 	link.InsertAtTail(1)
