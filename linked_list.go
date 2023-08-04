@@ -16,40 +16,43 @@ func newNode[T any](value T) *node[T] {
 	}
 }
 
-// TODO: Keep a Tail pointer to speed up operation at the tail
 type SingleLinkedList[T any] struct {
-	Head   *node[T]
+	head   *node[T]
+	tail   *node[T]
 	length int
 }
 
 func NewSingleLinkedList[T any]() *SingleLinkedList[T] {
 	return &SingleLinkedList[T]{
-		Head:   nil,
+		head:   nil,
+		tail:   nil,
 		length: 0,
 	}
 }
 
 func (l *SingleLinkedList[T]) InsertAtHead(value T) {
 	newNode := newNode(value)
-	newNode.next = l.Head
-	l.Head = newNode
+	newNode.next = l.head
+	l.head = newNode
+
+	//special case, inserting into an empty list
+	if l.length == 0 {
+		l.tail = newNode
+	}
 	l.length++
 }
 
 // Add a node of type T value at the end of the linked list
 func (l *SingleLinkedList[T]) InsertAtTail(value T) {
 	// special case of the empty list
-	if l.Head == nil {
+	if l.head == nil {
 		l.InsertAtHead(value)
 		return
 	}
 
-	cur := l.Head
-	for cur.next != nil {
-		cur = cur.next
-	}
 	newNode := newNode(value)
-	cur.next = newNode
+	l.tail.next = newNode
+	l.tail = newNode
 	l.length++
 }
 
@@ -63,7 +66,7 @@ func (l *SingleLinkedList[T]) InsertAt(index int, value T) error {
 		return fmt.Errorf("index out of range")
 	}
 
-	// special case: index is 0, insert at head by use InsertAtHead method
+	// special case: index is 0, insert at head by use InsertAthead method
 	if index == 0 {
 		l.InsertAtHead(value)
 		return nil
@@ -76,7 +79,7 @@ func (l *SingleLinkedList[T]) InsertAt(index int, value T) error {
 	}
 
 	// general case: find the node before the index, then insert a new node after the found node
-	cur := l.Head
+	cur := l.head
 	for i := 0; i < index-1; i++ {
 		cur = cur.next
 	}
@@ -89,30 +92,37 @@ func (l *SingleLinkedList[T]) InsertAt(index int, value T) error {
 }
 
 func (l *SingleLinkedList[T]) DeleteAtHead() error {
-	if l.Head == nil {
+	if l.head == nil {
 		return fmt.Errorf("list is empty")
 	}
 
-	l.Head = l.Head.next
+	l.head = l.head.next
 	l.length--
+
+	// special case, deleted the last node
+	if l.head == nil {
+		l.tail = nil
+	}
 	return nil
 }
 
 func (l *SingleLinkedList[T]) DeleteAtTail() error {
-	if l.Head == nil {
+	if l.head == nil {
 		return fmt.Errorf("list is empty")
 	}
 	// special case: the list has only one node
-	if l.Head.next == nil {
+	if l.head.next == nil {
 		return l.DeleteAtHead()
 	}
 
 	// general case: find the second last node of list, then delete its' next node
-	cur := l.Head
-	for cur.next.next != nil {
+	cur := l.head
+	for cur.next != l.tail {
 		cur = cur.next
 	}
 	cur.next = nil
+
+	l.tail = cur
 	l.length--
 	return nil
 }
@@ -124,20 +134,19 @@ func (l *SingleLinkedList[T]) DeleteAt(index int) error {
 	if index < 0 || index > size-1 {
 		return fmt.Errorf("index out of range")
 	}
-	// special case: index is 0, delete at head by use DeleteAtHead method
+	// special case: index is 0, delete at head by use DeleteAthead method
 	if index == 0 {
 		return l.DeleteAtHead()
 	}
 
 	// general case: find the node before the index, then delete its' next node
-	cur := l.Head
+	cur := l.head
 	for i := 0; i < index-1; i++ {
 		cur = cur.next
 	}
 	cur.next = cur.next.next
 	l.length--
 	return nil
-
 }
 
 // Get the value of the indexth node in the linked list, if the index is valid.
@@ -148,7 +157,7 @@ func (l *SingleLinkedList[T]) Get(index int) (T, bool) {
 		return t, false
 	}
 	// general case: find the node at the index, then return its' value
-	cur := l.Head
+	cur := l.head
 	for i := 0; i < index; i++ {
 		cur = cur.next
 	}
@@ -162,7 +171,7 @@ func (l *SingleLinkedList[T]) Length() int {
 //
 func (l *SingleLinkedList[T]) Values() []T {
 	values := []T{}
-	cur := l.Head
+	cur := l.head
 	for cur != nil {
 		values = append(values, cur.data)
 		cur = cur.next
