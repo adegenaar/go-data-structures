@@ -1,6 +1,6 @@
+// todo: fill in the package documentation
 package containers
 
-// todo: fill in the package documentation
 import "fmt"
 
 // TODO: document the doubleNode information
