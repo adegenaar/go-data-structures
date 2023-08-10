@@ -1,5 +1,5 @@
 // todo: fill in the package documentation
-package godatastructures
+package containers
 
 import "fmt"
 

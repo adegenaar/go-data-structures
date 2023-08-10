@@ -1,4 +1,4 @@
-package godatastructures
+package containers
 
 import (
 	"reflect"
@@ -54,6 +54,7 @@ func TestDoubleLinked_InsertAt(t *testing.T) {
 	link.InsertAtTail(2)
 	link.InsertAtTail(3)
 	link.InsertAtTail(4)
+
 	expected := []int{1, 2, 3, 4}
 	values := link.Values()
 	if !reflect.DeepEqual(values, expected) {
