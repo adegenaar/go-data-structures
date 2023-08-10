@@ -1,4 +1,4 @@
-package godatastructures
+package containers
 
 import (
 	"reflect"
