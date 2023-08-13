@@ -21,10 +21,10 @@ func (s *Stack[T]) Pop() (T, bool) {
 	if s == nil {
 		return ret, false
 	}
-	ret, ok := s.Get(s.DoubleLinkedList.Length() - 1)
+	ret, ok := s.Get(0)
 	if !ok {
 		return ret, false //not found
 	}
-	s.DeleteAtTail() // remove it from the list
+	s.DeleteAtHead() // remove it from the list
 	return ret, true
 }
